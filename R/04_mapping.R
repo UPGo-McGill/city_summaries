@@ -2,13 +2,26 @@
 
 source("R/01_helper_functions.R")
 
+city <- "plateau-mont-royal montreal"
 
+streets <- 
+  getbb(city) %>% 
+  opq() %>% 
+  add_osm_feature(key = "highway") %>% 
+  osmdata_sf()
+
+streets <- 
+  rbind(streets$osm_polygons %>% st_cast("LINESTRING"),streets$osm_lines) %>% 
+  as_tibble() %>% 
+  st_as_sf() %>% 
+  st_transform(32618) %>%
+  select(osm_id, name, geometry)
 
 
 ##
 figure1 <- 
-  tm_shape(st_buffer(city_border, 200)) +
-  tm_borders(lwd = 1) + 
+#  tm_shape(st_buffer(city_border, 200)) +
+#  tm_borders(lwd = 1) + 
   tm_shape(streets)+
   tm_lines(col="grey", alpha = 0.5)+
   tm_shape(property)+
