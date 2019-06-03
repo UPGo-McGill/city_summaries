@@ -3,38 +3,28 @@
 
 source("R/01_helper_functions.R")
 
-## Specify variables (start date should be at least two years before the 
-# end date in order to allow for year to year comparisons)
-
 # See CMA_Codes or CD_Codes for list
 CMA_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CMA") 
 CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
 
-code = "24462"
+citycode = "24462"
 
-End_date <- as.Date("2019-05-01")
+## Specify dates (start date should be at least two years before the 
+# end date in order to allow for year to year comparisons)
+End_date <- as.Date("2019-04-30")
 
-Start_date <- as.Date("2018-05-01")
+Start_date <- as.Date("2016-05-01")
 
 ## Import city geometries
-
-# See CMA_Codes or CD_Codes for list
-CMA_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CMA") 
-
-CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
-
-# CMA = "" specifies the city of interest
-# For a regional municipality/area not in a city, 
-# replace instances of "CMA" with "CD"
+# For a regional municipality/area not in a city, replace instances of "CMA" with "CD"
 
 city <- 
   get_census(
     dataset = "CA16", 
-    regions = list(CMA = code),  
+    regions = list(CMA = citycode),  
     level = "CMA",
     geo_format = "sf") %>% 
   st_transform(32618)
-
 
 
 ## Import private Airbnb files
