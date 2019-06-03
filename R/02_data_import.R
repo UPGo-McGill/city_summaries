@@ -8,6 +8,7 @@ CMA_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CMA")
 CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
 
 citycode = "24462"
+cityname = "Montreal"
 
 ## Specify dates (start date should be at least two years before the 
 # end date in order to allow for year to year comparisons)
