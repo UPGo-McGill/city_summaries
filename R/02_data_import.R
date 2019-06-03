@@ -97,12 +97,14 @@ daily <-
   arrange(Property_ID, Date)
 
 
-## Trim listings the city geometry and inputted dates
+## Trim listings to city geometry and inputted dates
 property <-
   property %>% 
   filter(Property_ID %in% daily$Property_ID,
          Scraped >= Start_date,
-         Created <= End_date) 
+         Created <= End_date) %>% 
+  st_join(st_buffer(city["geometry"], 200),
+          join = st_within, left = FALSE)
 
 daily <- 
   daily %>% 
