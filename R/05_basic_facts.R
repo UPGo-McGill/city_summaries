@@ -61,16 +61,14 @@ daily %>%
 daily %>% 
   filter(Date <= End_date & 
            Date >= year_prior &
-           Status == "R" &
-           !is.na(Price)) %>%
- summarise(sum_revenue = sum(Price)*exchange_rate)
+           Status == "R" ) %>%
+ summarise(sum_revenue = sum(Price, na.rm = TRUE) * exchange_rate)
 
 daily %>% 
   filter(Date <= year_prior 
          & Date >= year_prior_prior 
-         & Status == "R" &
-        !is.na(Price)) %>%
-summarise(sum_revenue = sum(Price)*exchange_rate)
+         & Status == "R") %>%
+summarise(sum_revenue = sum(Price, na.rm = TRUE) * exchange_rate)
 
 
 # Housing loss on the end date and a year prior
