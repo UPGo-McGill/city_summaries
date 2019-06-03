@@ -5,13 +5,20 @@ source("R/01_helper_functions.R")
 
 ## Import city geometries
 # CMA = "" specifies the city of interest
-CMA <- 
+# For a regional municipality/area not in a city, 
+# replace instances of "CMA" with "CD"
+City <- 
   get_census(
     dataset = "CA16", 
     regions = list(CMA = ""),  
     level = "CMA",
     geo_format = "sf") %>% 
   st_transform(32618)
+
+# See CMA_Codes or CD_Codes for list
+CMA_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CMA") 
+  
+CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
 
 ## Specify variables 
 Start_date <- as.Date("2018-05-01")
