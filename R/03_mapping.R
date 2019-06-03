@@ -20,8 +20,8 @@ streets <-
 
 ##
 figure1 <- 
-#  tm_shape(st_buffer(city_border, 200)) +
-#  tm_borders(lwd = 1) + 
+  #  tm_shape(st_buffer(city_border, 200)) +
+  #  tm_borders(lwd = 1) + 
   tm_shape(streets)+
   tm_lines(col="grey", alpha = 0.5)+
   tm_shape(property)+
