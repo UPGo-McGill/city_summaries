@@ -6,7 +6,7 @@ source("R/01_helper_functions.R")
 # Specify variables
 CMA <- "x"
 Start_date <- as.Date("2018-05-01")
-End_date <- as.Date("2019-05-01")
+End_date <- as.Date("2019-04-30")
 
 ## Import city geometries
 
@@ -83,16 +83,12 @@ daily <-
   arrange(Property_ID, Date)
 
 
-## Trim listings the city geometry
+## Trim listings the city geometry and inputted dates
 property <-
   property %>% 
   filter(Property_ID %in% daily$Property_ID,
          Scraped >= Start_date,
          Created <= End_date) 
-# %>% 
-# st_join(st_buffer(city["geometry"], 200),
-         # join = st_within, left = FALSE) %>% 
-# left_join(read_csv("data/raffle.csv"))
 
 daily <- 
   daily %>% 
