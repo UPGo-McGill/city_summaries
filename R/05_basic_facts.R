@@ -35,6 +35,8 @@ nrow(daily %>%
 
 
 #  Average number of active listings over the past year and previous year
+# how to do this without assignment?
+
 listings_past_year <- daily %>% 
   filter(Date <= End_date & Date >= year_prior) %>% 
   group_by(Date) %>% 
@@ -55,8 +57,17 @@ rm(listings_past_year)
 
 
 # Revenue over past twelve months and twelve months prior to that
+# how to do this without assignment?
 
-daily %>% 
-  filter(Date <= End_date & Date >= year_prior & Status == "R") 
+revenue_past_year <- daily %>% 
+  filter(Date <= End_date & Date >= year_prior & Status == "R")
+
+sum(revenue_past_year$Price, na.rm = TRUE)
+
+revenue_past_year <- daily %>% 
+  filter(Date <= year_prior & Date >= year_prior_prior & Status == "R")
+
+sum(revenue_past_year$Price, na.rm = TRUE)
+rm(revenue_past_year)
 
 
