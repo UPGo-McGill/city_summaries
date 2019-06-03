@@ -8,6 +8,9 @@ year_prior$year <- year_prior$year - 1
 year_prior_prior <- as.POSIXlt(year_prior)
 year_prior_prior$year <- year_prior$year - 1
 
+# Update USD to CAD exchange rate
+exchange_rate <- 1.3
+
 # Number of active listings on end date and a year before
 
 daily %>% 
@@ -58,13 +61,13 @@ daily %>%
   filter(Date <= End_date & 
            Date >= year_prior &
            Status == "R") %>%
-  summarise(sum_revenue = sum(Price))
+  summarise(sum_revenue = sum(Price)*exchange_rate)
 
 daily %>% 
   filter(Date <= year_prior 
          & Date >= year_prior_prior 
          & Status == "R") %>%
-  summarise(sum_revenue = sum(Price))
+  summarise(sum_revenue = sum(Price)*exchange_rate)
 
 
 # Housing loss on the end date and a year prior
