@@ -3,15 +3,17 @@
 
 source("R/01_helper_functions.R")
 
-## Import city geometries
-
+# Specify variables
 CMA <- "x"
+Start_date <- as.Date("2018-05-01")
+End_date <- as.Date("2019-04-30")
 
+## Import city geometries
 
 ## Import private Airbnb files
 
 property <-
-  read_csv("data/property_2019.csv", col_types = cols_only(
+  read_csv("data/property.csv", col_types = cols_only(
     `Property ID` = col_character(),
     `Listing Title` = col_character(),
     `Property Type` = col_character(),
@@ -64,7 +66,7 @@ property <-
   select(-Property_Type)
 
 daily <- 
-  read_csv("data/daily_2019.csv", col_types = cols(
+  read_csv("data/daily.csv", col_types = cols(
     `Property ID` = col_character(),
     Date = col_date(format = ""),
     Status = col_factor(levels = c("U", "B", "A", "R")),
@@ -81,23 +83,18 @@ daily <-
   arrange(Property_ID, Date)
 
 
-## Trim listings to the Plateau in May 2018-April 2019 and add raffle results
-
+## Trim listings the city geometry and inputted dates
 property <-
   property %>% 
   filter(Property_ID %in% daily$Property_ID,
-         Scraped >= "2018-05-01",
-         Created <= "2019-04-30") %>% 
-  st_join(st_buffer(city["geometry"], 200),
-          join = st_within, left = FALSE) 
-# %>% 
-# left_join(read_csv("data/raffle.csv"))
+         Scraped >= Start_date,
+         Created <= End_date) 
 
 daily <- 
   daily %>% 
   filter(Property_ID %in% property$Property_ID,
-         Date >= "2018-05-01",
-         Date <= "2019-04-30")
+         Date >= Start_date,
+         Date <= End_date)
 
 
 ## Join property and daily file
@@ -133,46 +130,7 @@ property <-
   summarize(ML = as.logical(ceiling(mean(ML)))) %>% 
   inner_join(property, .)
 
-
-## Identify the least frequently rented multi-listing (LFRML)
-
-property <- 
-  property %>% 
-  group_by(Airbnb_HID, Listing_Type) %>% 
-  mutate(LFRML = case_when(
-    Listing_Type != "Entire home/apt" ~ FALSE,
-    ML == FALSE                       ~ FALSE,
-    n_available == min(n_available)   ~ TRUE,
-    TRUE                              ~ FALSE)) %>% 
-  ungroup()
-
-
-## Resolve any LFRML ties with n_reserved and then random chance
-
-property <- 
-  property %>% 
-  group_by(Airbnb_HID, Listing_Type) %>% 
-  mutate(LFRML = if_else(
-    sum(LFRML) > 1 & n_reserved != min(n_reserved),
-    FALSE, LFRML)) %>% 
-  ungroup()
-
-property <- 
-  property %>% 
-  group_by(Airbnb_HID, Listing_Type) %>% 
-  mutate(prob = sample(0:10000, n(), replace = TRUE),
-         LFRML = if_else(
-           sum(LFRML) > 1 & prob != max(prob), FALSE, LFRML)) %>% 
-  select(-prob)
-
-
-## Test for remaining LFRML ties:
-# property %>% st_drop_geometry() %>% group_by(Airbnb_HID) %>%
-# filter(sum(LFRML) > 1) %>% summarize(n_LFRML = sum(LFRML))
-
-
 # Identify ghost hotels
-
 GH_list <-
   strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, "2018-05-01",
              "2019-04-30", listing_type = Listing_Type) %>% 
@@ -185,17 +143,3 @@ property <-
   mutate(GH = if_else(Property_ID %in% GH_list, TRUE, FALSE))
 
 rm(GH_list)
-
-
-# Determine legality
-
-property <- 
-  property %>%   
-  mutate(Legal = case_when(
-    Permit == TRUE                 ~ TRUE,
-    GH == TRUE                     ~ FALSE,
-    Listing_Type == "Private room" ~ TRUE,
-    FREH == TRUE                   ~ FALSE,
-    LFRML == TRUE                  ~ TRUE,
-    ML == TRUE                     ~ FALSE,
-    TRUE                           ~ TRUE))
