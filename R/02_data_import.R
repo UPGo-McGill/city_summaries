@@ -5,7 +5,7 @@ source("R/01_helper_functions.R")
 ## Specify variables (start date should be at least two years before the 
 # end date in order to allow for year to year comparisons)
 
-city = "Montreal"
+cityname = "Montreal"
 
 End_date <- as.Date("2019-05-01")
 
@@ -46,7 +46,7 @@ End_date <- as.Date("2019-05-01")
 ## Import private Airbnb files
 
 property <-
-  read_csv("data/Montreal_property_2019.csv", col_types = cols_only(
+  read_csv("data/property.csv", col_types = cols_only(
     `Property ID` = col_character(),
     `Listing Title` = col_character(),
     `Property Type` = col_character(),
@@ -99,7 +99,7 @@ property <-
   select(-Property_Type)
 
 daily <- 
-  read_csv("data/Montreal_daily_2019.csv", col_types = cols(
+  read_csv("data/daily.csv", col_types = cols(
     `Property ID` = col_character(),
     Date = col_date(format = ""),
     Status = col_factor(levels = c("U", "B", "A", "R")),
