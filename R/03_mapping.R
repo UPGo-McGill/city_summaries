@@ -2,10 +2,22 @@
 
 source("R/01_helper_functions.R")
 
-city <- "plateau-mont-royal montreal"
+## Graphing
+#1) A simple graph showing active daily listings. 
+#I.e., take your daily file, then group_by(Date) %>% 
+#  summarize(Listings = n()), and stick that into a 
+#ggplot geom_point with Date as the x aesthetic and Listings as the y.
+
+
+daily %>% 
+  group_by("Date") %>%
+  summarize(Listings = n())
+
+
+## Import street basemap
 
 streets <- 
-  getbb(city) %>% 
+  getbb(CMA) %>% 
   opq() %>% 
   add_osm_feature(key = "highway") %>% 
   osmdata_sf()
@@ -16,7 +28,6 @@ streets <-
   st_as_sf() %>% 
   st_transform(32618) %>%
   select(osm_id, name, geometry)
-
 
 ##
 figure1 <- 
@@ -31,7 +42,7 @@ figure1 <-
           alpha = 0.6, 
           legend.show = FALSE, 
           size = "revenue", 
-          title.size = "Revenu", 
+          title.size = "Revenue", 
           size.lim = c(0, 100000)) +
   tm_add_legend(type="symbol",
                 col= get_brewer_pal("-Dark2", n = 3),
@@ -39,3 +50,6 @@ figure1 <-
                 border.lwd = NA,
                 alpha = 0.6,
                 title="Listing Type")
+
+
+tmap_save(figure1, "output/listing_type.png", width = 2400, height = 2400 )
