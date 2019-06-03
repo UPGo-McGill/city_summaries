@@ -3,10 +3,7 @@
 source("R/01_helper_functions.R")
 
 ## Import street basemap
-
-available_features()
-
-# Road level based on city size?
+# Road level based on city size: secondary, tertiary or all
 
 streets <- 
   getbb("montreal canada") %>% 
