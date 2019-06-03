@@ -59,15 +59,45 @@ rm(listings_past_year)
 # Revenue over past twelve months and twelve months prior to that
 # how to do this without assignment?
 
-revenue_past_year <- daily %>% 
-  filter(Date <= End_date & Date >= year_prior & Status == "R")
+revenue <- daily %>% 
+  filter(Date <= End_date & 
+           Date >= year_prior &
+           Status == "R")
 
-sum(revenue_past_year$Price, na.rm = TRUE)
+sum(revenue$Price, na.rm = TRUE)
 
-revenue_past_year <- daily %>% 
-  filter(Date <= year_prior & Date >= year_prior_prior & Status == "R")
+revenue <- daily %>% 
+  filter(Date <= year_prior 
+         & Date >= year_prior_prior 
+         & Status == "R")
 
-sum(revenue_past_year$Price, na.rm = TRUE)
-rm(revenue_past_year)
+sum(revenue$Price, na.rm = TRUE)
+rm(revenue)
+
+# Housing loss on the end date and a year prior
+GH_list <-
+  strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, year_prior,
+             End_date, listing_type = Listing_Type) %>% 
+  filter(date == End_date) %>% 
+  group_by(ghost_ID) %>% 
+  summarize(n = sum(housing_units)) 
+
+sum(GH_list$n) +
+nrow(daily %>% 
+  filter(Date == End_date) %>% 
+  inner_join(property, .) %>% 
+  filter(FREH == TRUE))
 
 
+GH_list <-
+  strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, year_prior_prior,
+             year_prior, listing_type = Listing_Type) %>% 
+  filter(date == year_prior) %>% 
+  group_by(ghost_ID) %>% 
+  summarize(n = sum(housing_units)) 
+
+sum(GH_list$n) +
+  nrow(daily %>% 
+         filter(Date == year_prior) %>% 
+         inner_join(property, .) %>% 
+         filter(FREH == TRUE))
