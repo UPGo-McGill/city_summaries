@@ -6,7 +6,7 @@ source("R/01_helper_functions.R")
 # Road level based on city size: secondary, tertiary or all
 
 streets <- 
-  getbb("montreal canada") %>% 
+  getbb(cityname) %>% 
   opq() %>% 
   add_osm_feature(key = "highway", value = "tertiary") %>% 
   osmdata_sf()
@@ -21,8 +21,8 @@ streets <-
 ## Map of Listing Type (Entire Home, Private Room or Shared Room) and Revenue
 
 #figure1 <- 
-  tm_shape(st_buffer(city, 200)) +
-  tm_borders(lwd = 1) + 
+#  tm_shape(st_buffer(city, 200)) +
+#  tm_borders(lwd = 1) + 
   tm_shape(streets)+
   tm_lines(col="grey", alpha = 0.5)+
   tm_shape(property)+
