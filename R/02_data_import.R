@@ -5,7 +5,7 @@ source("R/01_helper_functions.R")
 
 # Specify variables
 CMA <- "x"
-Start_date <- as.Date("2018-05-01")
+Start_date <- as.Date("2016-05-01")
 End_date <- as.Date("2019-04-30")
 
 ## Import city geometries
