@@ -3,4 +3,7 @@
 .RData
 .Ruserdata
 *.Rproj
-Data
+*daily.csv
+*property.csv
+
+
