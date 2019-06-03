@@ -38,42 +38,34 @@ nrow(daily %>%
 
 
 #  Average number of active listings over the past year and previous year
-# how to do this without assignment?
 
 daily %>% 
   filter(Date <= End_date & Date >= year_prior) %>% 
   group_by(Date) %>% 
-  summarize(Listings = n())%>%
+  summarize(Listings = n()) %>%
   summarise(mean_Listings = mean(Listings))
-
 
 daily %>% 
   filter(Date <= year_prior & Date >= year_prior_prior) %>% 
   group_by(Date) %>% 
-  summarize(Listings = n())%>%
+  summarize(Listings = n()) %>%
   summarise(mean_Listings = mean(Listings))
 
 
 # Revenue over past twelve months and twelve months prior to that
-# how to do this without assignment?
 
-daily1 %>% 
+daily %>% 
   filter(Date <= End_date & 
            Date >= year_prior &
-           Status == "R")%>%
+           Status == "R") %>%
   summarise(sum_revenue = sum(Price))
-
-
-#sum(revenue$Price, na.rm = TRUE)
 
 daily %>% 
   filter(Date <= year_prior 
          & Date >= year_prior_prior 
-         & Status == "R")%>%
+         & Status == "R") %>%
   summarise(sum_revenue = sum(Price))
 
-#sum(revenue$Price, na.rm = TRUE)
-#rm(revenue)
 
 # Housing loss on the end date and a year prior
 GH_list <-
