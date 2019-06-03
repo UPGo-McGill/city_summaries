@@ -3,12 +3,19 @@
 
 source("R/01_helper_functions.R")
 
-# Specify variables
-CMA <- "x"
-Start_date <- as.Date("2016-05-01")
-End_date <- as.Date("2019-04-30")
-
 ## Import city geometries
+# CMA = "" specifies the city of interest
+CMA <- 
+  get_census(
+    dataset = "CA16", 
+    regions = list(CMA = ""),  
+    level = "CMA",
+    geo_format = "sf") %>% 
+  st_transform(32618)
+
+## Specify variables 
+Start_date <- as.Date("2018-05-01")
+End_date <- as.Date("2019-05-01")
 
 ## Import private Airbnb files
 
