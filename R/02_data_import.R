@@ -151,8 +151,8 @@ property <-
 
 # Identify ghost hotels
 GH_list <-
-  strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, "2018-05-01",
-             "2019-04-30", listing_type = Listing_Type) %>% 
+  strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, Start_date,
+             End_date, listing_type = Listing_Type) %>% 
   pull(property_IDs) %>%
   unlist() %>%
   unique()
