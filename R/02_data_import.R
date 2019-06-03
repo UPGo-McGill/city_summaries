@@ -2,10 +2,15 @@
 ## Load helpers
 
 source("R/01_helper_functions.R")
+
 ## Specify variables (start date should be at least two years before the 
 # end date in order to allow for year to year comparisons)
 
-cityname = "Montreal"
+# See CMA_Codes or CD_Codes for list
+CMA_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CMA") 
+CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
+
+code = "24462"
 
 End_date <- as.Date("2019-05-01")
 
@@ -22,25 +27,14 @@ CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
 # For a regional municipality/area not in a city, 
 # replace instances of "CMA" with "CD"
 
-City <- 
+city <- 
   get_census(
     dataset = "CA16", 
-    regions = list(CMA = city),  
-    regions = list(CMA = "24462"),  
+    regions = list(CMA = code),  
     level = "CMA",
     geo_format = "sf") %>% 
   st_transform(32618)
 
-
-# See CMA_Codes or CD_Codes for list
-CMA_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CMA") 
-  
-CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
-
-z
-## Specify variables 
-Start_date <- as.Date("2018-05-01")
-End_date <- as.Date("2019-05-01")
 
 
 ## Import private Airbnb files
@@ -122,7 +116,7 @@ property <-
   filter(Property_ID %in% daily$Property_ID,
          Scraped >= Start_date,
          Created <= End_date) %>% 
-  st_join(st_buffer(City["geometry"], 200),
+  st_join(st_buffer(city["geometry"], 200),
           join = st_within, left = FALSE)
 
 daily <- 
