@@ -2,8 +2,11 @@
 
 source("R/01_helper_functions.R")
 
+# Set up timeframes
 year_prior <- as.POSIXlt(End_date)
 year_prior$year <- year_prior$year - 1
+year_prior_prior <- as.POSIXlt(year_prior)
+year_prior_prior$year <- year_prior$year - 1
 
 # Number of active listings on end date and a year before
 
@@ -43,9 +46,6 @@ listings_past_year <- daily %>%
   summarize(Listings = n())
 
 mean(listings_past_year$Listings)
-
-year_prior_prior <- as.POSIXlt(year_prior)
-year_prior_prior$year <- year_prior$year - 1
 
 listings_past_year <- daily %>% 
   filter(Date <= year_prior & Date >= year_prior_prior) %>% 
