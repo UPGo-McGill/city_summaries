@@ -21,10 +21,10 @@ streets <-
 ## Map of Listing Type (Entire Home, Private Room or Shared Room) and Revenue
 
 #figure1 <- 
-#  tm_shape(st_buffer(city, 200)) +
-#  tm_borders(lwd = 1) + 
   tm_shape(streets)+
   tm_lines(col="grey", alpha = 0.5)+
+   tm_shape(city) +
+  tm_borders(lwd = 1) + 
   tm_shape(property)+
   tm_dots(col = "Listing_Type",
          scale = 4/3, 
