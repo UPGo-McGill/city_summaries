@@ -19,30 +19,32 @@ streets <-
   select(osm_id, name, geometry)
 
 ## Map of Listing Type (Entire Home, Private Room or Shared Room) and Revenue
+# For smaller cities or neighbourhoods may need to replace tm_shape(city) for:
+##tm_shape(st_buffer(city, 200)) 
 
-#figure1 <- 
+figure1 <- 
   tm_shape(streets)+
   tm_lines(col="grey", alpha = 0.5)+
-   tm_shape(city) +
+  tm_shape(city) +
   tm_borders(lwd = 1) + 
   tm_shape(property)+
   tm_dots(col = "Listing_Type",
-         scale = 4/3, 
+          scale = 4/3, 
           palette = get_brewer_pal("-Dark2", n = 3), 
           alpha = 0.6, 
-          legend.show = FALSE, 
           size = "revenue", 
           title.size = "Revenue", 
-          size.lim = c(0, 100000)) +
-   tm_layout(legend.position = c("left", "bottom"),
-             frame = FALSE) +
-  tm_compass()+
+          size.lim = c(0, 100000),
+          legend.show = FALSE,
+          legend.size.show = TRUE) +
+  tm_layout(legend.position = c("left", "bottom"),
+            frame = FALSE, legend.bg.alpha = 0.6, legend.bg.color = "white") +
   tm_add_legend(type="symbol",
                 col= get_brewer_pal("-Dark2", n = 3),
                 labels=c("Entire Home", "Private Room", "Shared Room"),
                 border.lwd = NA,
-              alpha = 0.6,
-                title="Listing Type")
-
-
+                alpha = 1,
+                title="Listing Type")+
+  tm_compass()
+   
 tmap_save(figure1, "output/listing_type.png", width = 2400, height = 2400 )
