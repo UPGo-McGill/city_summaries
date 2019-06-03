@@ -4,21 +4,21 @@
 source("R/01_helper_functions.R")
 
 ## Import city geometries
+# See CMA_Codes or CD_Codes for list
+CMA_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CMA") 
+
+CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
+
 # CMA = "" specifies the city of interest
 # For a regional municipality/area not in a city, 
 # replace instances of "CMA" with "CD"
 City <- 
   get_census(
     dataset = "CA16", 
-    regions = list(CMA = ""),  
+    regions = list(CMA = "24462"),  
     level = "CMA",
     geo_format = "sf") %>% 
   st_transform(32618)
-
-# See CMA_Codes or CD_Codes for list
-CMA_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CMA") 
-  
-CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
 
 ## Specify variables 
 Start_date <- as.Date("2018-05-01")
@@ -27,7 +27,7 @@ End_date <- as.Date("2019-05-01")
 ## Import private Airbnb files
 
 property <-
-  read_csv("data/property.csv", col_types = cols_only(
+  read_csv("data/Montreal_property_2019.csv", col_types = cols_only(
     `Property ID` = col_character(),
     `Listing Title` = col_character(),
     `Property Type` = col_character(),
@@ -80,7 +80,7 @@ property <-
   select(-Property_Type)
 
 daily <- 
-  read_csv("data/daily.csv", col_types = cols(
+  read_csv("data/Montreal_daily_2019.csv", col_types = cols(
     `Property ID` = col_character(),
     Date = col_date(format = ""),
     Status = col_factor(levels = c("U", "B", "A", "R")),
@@ -103,7 +103,7 @@ property <-
   filter(Property_ID %in% daily$Property_ID,
          Scraped >= Start_date,
          Created <= End_date) %>% 
-  st_join(st_buffer(city["geometry"], 200),
+  st_join(st_buffer(City["geometry"], 200),
           join = st_within, left = FALSE)
 
 daily <- 
