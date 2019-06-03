@@ -10,30 +10,30 @@ year_prior_prior$year <- year_prior$year - 1
 
 # Number of active listings on end date and a year before
 
-daily1 %>% 
+daily %>% 
   filter(Date == End_date) %>% 
   group_by(Property_ID) %>% 
   nrow()
 
-daily1 %>% 
+daily %>% 
   filter(Date == year_prior) %>% 
   group_by(Property_ID) %>% 
   nrow()
 
 # Percent of listings which are entire homes on end date and a year before
 
-nrow(daily1 %>% 
+nrow(daily %>% 
        filter(Date == End_date) %>% 
        group_by(Property_ID) %>% 
        filter(Listing_Type == "Entire home/apt"))/
-  nrow(daily1 %>% 
+  nrow(daily %>% 
          filter(Date == End_date))
 
-nrow(daily1 %>% 
+nrow(daily %>% 
        filter(Date == year_prior) %>% 
        group_by(Property_ID) %>% 
        filter(Listing_Type == "Entire home/apt"))/
-  nrow(daily1 %>% 
+  nrow(daily %>% 
          filter(Date == year_prior))
 
 
@@ -57,20 +57,23 @@ daily %>%
 # Revenue over past twelve months and twelve months prior to that
 # how to do this without assignment?
 
-revenue <- daily %>% 
+daily1 %>% 
   filter(Date <= End_date & 
            Date >= year_prior &
-           Status == "R")
+           Status == "R")%>%
+  summarise(sum_revenue = sum(Price))
 
-sum(revenue$Price, na.rm = TRUE)
 
-revenue <- daily %>% 
+#sum(revenue$Price, na.rm = TRUE)
+
+daily %>% 
   filter(Date <= year_prior 
          & Date >= year_prior_prior 
-         & Status == "R")
+         & Status == "R")%>%
+  summarise(sum_revenue = sum(Price))
 
-sum(revenue$Price, na.rm = TRUE)
-rm(revenue)
+#sum(revenue$Price, na.rm = TRUE)
+#rm(revenue)
 
 # Housing loss on the end date and a year prior
 GH_list <-
