@@ -7,13 +7,15 @@ source("R/01_helper_functions.R")
 CMA_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CMA") 
 CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
 
-citycode = "24462"
-cityname = "Montreal"
+CD_Codes %>%
+  filter(str_detect (name, "Yukon"))
+
+citycode = "6001"
+cityname = "Whitehorse"
 
 ## Specify dates (start date should be at least two years before the 
 # end date in order to allow for year to year comparisons)
 End_date <- as.Date("2019-04-30")
-
 Start_date <- as.Date("2016-05-01")
 
 ## Import city geometries
@@ -27,23 +29,23 @@ city <-
     geo_format = "sf") %>% 
   st_transform(32618)
 
-
 ## Import private Airbnb files
 
 property <-
-  read_csv("data/property.csv", col_types = cols_only(
-    `Property ID` = col_character(),
-    `Listing Title` = col_character(),
-    `Property Type` = col_character(),
-    `Listing Type` = col_character(),
-    `Created Date` = col_date(format = ""),
-    `Last Scraped Date` = col_date(format = ""),
+  read_csv("data/Whitehorse_property.csv", col_types = cols_only(
+    `Property_ID` = col_character(),
+    `Listing_Title` = col_character(),
+    `Property_Type` = col_character(),
+    `Listing_Type` = col_character(),
+    `Created` = col_date(format = ""),
+    `Scraped` = col_date(format = ""),
     Latitude = col_double(),
     Longitude = col_double(),
-    `Airbnb Property ID` = col_double(),
-    `Airbnb Host ID` = col_double(),
-    `HomeAway Property ID` = col_character(),
-    `HomeAway Property Manager` = col_character())) %>% 
+    `City` = col_skip(),
+    `Airbnb_PID` = col_double(),
+    `Airbnb_HID` = col_double(),
+    `HomeAway_PID` = col_character(),
+    `HomeAway_HID` = col_character())) %>% 
   set_names(c("Property_ID", "Listing_Title", "Property_Type", "Listing_Type",
               "Created", "Scraped", "Latitude", "Longitude", "Airbnb_PID",
               "Airbnb_HID", "HomeAway_PID", "HomeAway_HID")) %>% 
@@ -84,17 +86,17 @@ property <-
   select(-Property_Type)
 
 daily <- 
-  read_csv("data/daily.csv", col_types = cols(
-    `Property ID` = col_character(),
+  read_csv("data/Whitehorse_daily.csv", col_types = cols(
+    `Property_ID` = col_character(),
     Date = col_date(format = ""),
     Status = col_factor(levels = c("U", "B", "A", "R")),
-    `Booked Date` = col_skip(),
-    `Price (USD)` = col_double(),
-    `Price (Native)` = col_skip(),
-    `Currency Native` = col_skip(),
-    `Reservation ID` = col_skip(),
-    `Airbnb Property ID` = col_double(),
-    `HomeAway Property ID` = col_character())) %>% 
+   # `Booked Date` = col_skip(),
+    `Price` = col_double(),
+    #`Price (Native)` = col_skip(),
+    #`Currency Native` = col_skip(),
+    #`Reservation ID` = col_skip(),
+    `Airbnb_PID` = col_double(),
+    `HomeAway_PID` = col_character())) %>% 
   set_names(c("Property_ID", "Date", "Status", "Price", "Airbnb_PID", 
               "HomeAway_PID")) %>% 
   filter(!is.na(Status)) %>%
