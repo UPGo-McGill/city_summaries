@@ -11,6 +11,8 @@ library(dodgr)
 library(stplanr)
 library(mapview)
 library(shinyjs)
+library(rmarkdown)
+
 
 ## Census Mapper - Run Personal API
 # options(cancensus.api_key = "")
