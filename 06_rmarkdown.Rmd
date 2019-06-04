@@ -40,7 +40,7 @@ Airbnb listings are a common presence in `r cityname`, with `r round(daily %>%
  
 *Figure 1* shows the distribution of Airbnb listings throughout `r cityname`, by listing type and revenue. As Airbnb hides the exact location of the listings, the locations may be obfuscated by up to 200 meters.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE}
 figure1
 ```
 
