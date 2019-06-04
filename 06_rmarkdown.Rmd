@@ -1,3 +1,8 @@
+---
+fig_caption: yes
+---
+
+
 ```{r, include = FALSE}
 source("R/01_helper_functions.R")
 # input variables (cityname, citycode, End_date, Start_date) into data import before knitting the script
@@ -40,7 +45,7 @@ Airbnb listings are a common presence in `r cityname`, with `r round(daily %>%
  
 *Figure 1* shows the distribution of Airbnb listings throughout `r cityname`, by listing type and revenue. As Airbnb hides the exact location of the listings, the locations may be obfuscated by up to 200 meters.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.cap="\\label{figure1} Figure 1: Active Airbnb listings by listing type and revenue", fig.align = 'center'}
 figure1
 ```
 
@@ -61,7 +66,7 @@ Airbnb has had `r ifelse((daily %>%
   nrow()), "increased", "decreased")`
  over the past years.  
 
-``` {r, echo = FALSE} 
+``` {r, echo = FALSE, fig.cap="\\label{figure2} Figure 2: The number of active Airbnb listings over time", fig.align = 'center'} 
 figure2
 ```
 
