@@ -18,7 +18,7 @@ figure2 <- ggplot(daily %>%
 #ggsave("output/figure2.jpg")
 
 # host revenue
-host_revenue <-
+figure3<-
   daily %>%
   filter(Date >= year_prior, Date <= End_date, Status == "R") %>%
   group_by(Airbnb_HID) %>%
@@ -32,7 +32,9 @@ host_revenue <-
   mutate(percentile = factor(percentile, levels = c('Top 1%', 'Top 5%', 'Top 10%')))
 
 ggplot(host_revenue)+
-  geom_bar(mapping = aes(x = percentile, y = value, fill = percentile), stat = "identity")
+  geom_bar(mapping = aes(x = percentile, y = value, fill = percentile), stat = "identity")+
+  theme_minimal()+
+  scale_fill_manual("Percentile", values = alpha(c("lightblue", "blue", "darkblue"), .6))
 
 #ggsave("output/figure3.jpg")
 
