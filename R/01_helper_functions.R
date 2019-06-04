@@ -12,6 +12,7 @@ library(stplanr)
 library(mapview)
 library(shinyjs)
 library(rmarkdown)
+library(tinytex)
 
 
 ## Census Mapper - Run Personal API
