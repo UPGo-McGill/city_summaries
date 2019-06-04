@@ -1,20 +1,135 @@
 ---
-title: "Airbnb and city"
+title: "Airbnb and Charlottetown"
 author: "Urban Politics and Governance Research Group"
 date: "June 2019"
-output: html_document
 ---
 
 ```{r, include = FALSE}
 source("R/01_helper_functions.R")
-options(cancensus.api_key = "CensusMapper_4be2cf3bf91d0cabf967f4934dbdc63b")
+# input variables (cityname, citycode, End_date, Start_date) into data import before knitting the script
 source("R/02_data_import.R")
-source("R/03_mapping.R")
+# Set USD to CAD exchange rate
+exchange_rate <- 1.34
 ```
 
-There were `r daily %>% 
+``` {r, include = FALSE}
+streets <- 
+  getbb(cityname) %>% 
+  opq() %>% 
+  add_osm_feature(key = "highway") %>% 
+  osmdata_sf()
+
+streets <- 
+  rbind(streets$osm_polygons %>% st_cast("LINESTRING"),streets$osm_lines) %>% 
+  as_tibble() %>% 
+  st_as_sf() %>% 
+  st_transform(32618) %>%
+  select(osm_id, name, geometry)
+ 
+# Set up timeframes
+year_prior <- as.POSIXlt(End_date)
+year_prior$year <- year_prior$year - 1
+year_prior_prior <- as.POSIXlt(year_prior)
+year_prior_prior$year <- year_prior$year - 1
+```
+
+**Airbnb Today** 
+
+Airbnb listings are a common presence in `r cityname`, with `r daily %>% 
   filter(Date == End_date) %>% 
   group_by(Property_ID) %>% 
-  nrow()` Airbnb listings in `r cityname` active on `r End_date`. The listings are shown in Figure 1.
-`r figure1`
-  
+  nrow()` active listings  on `r End_date`, averaging `r daily %>% 
+  filter(Date <= End_date & Date >= year_prior) %>% 
+  group_by(Date) %>% 
+  summarize(Listings = n()) %>%
+  summarise(mean_Listings = mean(Listings))` over the past twelve months. The corresponding listings have generated approximately `r daily %>% 
+  filter(Date <= End_date & 
+           Date >= year_prior &
+           Status == "R" ) %>%
+ summarise(sum_revenue = sum(Price, na.rm = TRUE) * exchange_rate)`$ in revenue over the same time period. 
+ 
+*Figure 1* shows the distribution of Airbnb listings throughout `r cityname`, by listing type and revenue. As Airbnb hides the exact location of the listings, the locations may be obfuscated by up to 200 meters.
+ 
+``` {r, echo = FALSE}
+tm_shape(property)+
+  tm_dots(scale = 0)+
+tm_shape(streets)+
+  tm_lines(col="grey", alpha = 0.5)+
+  tm_shape(city) +
+  tm_borders(lwd = 1) + 
+  tm_shape(property)+
+  tm_dots(col = "Listing_Type",
+          scale = 4/3, 
+          palette = get_brewer_pal("-Dark2", n = 3), 
+          alpha = 0.6, 
+          size = "revenue", 
+          title.size = "Revenue", 
+          size.lim = c(0, 100000),
+          legend.show = FALSE,
+          legend.size.show = TRUE) +
+  tm_layout(legend.position = c("left", "bottom"),
+            frame = FALSE, legend.bg.alpha = 0.6, legend.bg.color = "white") +
+  tm_add_legend(type="symbol",
+                col= get_brewer_pal("-Dark2", n = 3),
+                labels=c("Entire Home", "Private Room", "Shared Room"),
+                border.lwd = NA,
+                alpha = 1,
+                title="Listing Type")+
+  tm_compass()
+```
+
+
+**The Evolution of Airbnb**
+
+Airbnb has had an increasing presence in `r cityname`, with *Figure 2* showing its evolution from `r Start_date` to `r End_date`. It is evident that the number of listings has dramatically increased over the past years.  
+
+``` {r, echo = FALSE} 
+ggplot(daily %>% 
+         group_by(Date) %>% 
+         summarize(Listings = n())) +
+  geom_line(aes(Date, Listings)) 
+```
+
+
+**Housing Loss** 
+
+Listings consist of three types: entire homes or apartments, private rooms, or shared rooms. Entire homes or apartments represent housing that has likely been removed from the long-term rental market. 
+`r nrow(daily %>% 
+       filter(Date == End_date) %>% 
+       group_by(Property_ID) %>% 
+       filter(Listing_Type == "Entire home/apt"))*100/
+  nrow(daily %>% 
+         filter(Date == End_date))`% of listings are entire homes or apartments. This percentage has increased since `r year_prior` from `r nrow(daily %>% 
+       filter(Date == year_prior) %>% 
+       group_by(Property_ID) %>% 
+       filter(Listing_Type == "Entire home/apt"))*100/
+  nrow(daily %>% 
+         filter(Date == year_prior))`%. 
+Though private rooms and shared rooms are often indicative of hosts sharing their primary residence, this is not always the case. Ghost hotels, three or more private room listings in the same housing unit, also contribute to housing loss, as the separate private room listings make up an entire housing unit removed from the long-term rental housing market.
+         
+         
+When considering both ghost hotels and entire home and apartment listings, it is estimated that Airbnb has removed `r 
+st_drop_geometry(strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, year_prior,
+             End_date, listing_type = Listing_Type) %>% 
+  filter(date == End_date) %>% 
+  group_by(ghost_ID) %>% 
+  summarize(n = sum(housing_units)) %>% 
+  ungroup() %>% 
+  summarize(GH_housing_loss = sum(n))) +
+nrow(daily %>% 
+  filter(Date == End_date) %>% 
+  inner_join(property, .) %>% 
+  filter(FREH == TRUE)) ` housing units from the long-term rental market over the past year, increasing from `r 
+st_drop_geometry(strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, year_prior_prior,
+             year_prior, listing_type = Listing_Type) %>% 
+  filter(date == year_prior) %>% 
+  group_by(ghost_ID) %>% 
+  summarize(n = sum(housing_units)) %>% 
+  ungroup() %>% 
+  summarize(GH_housing_loss = sum (n))) +
+  nrow(daily %>% 
+         filter(Date == year_prior) %>% 
+         inner_join(property, .) %>% 
+         filter(FREH == TRUE))` units the year prior. 
+
+Evidently, as more units are converted into short-term rentals, Airbnb directly contributes to the removal of units from the long-term rental market. 
