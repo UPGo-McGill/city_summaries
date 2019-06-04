@@ -31,7 +31,7 @@ host_revenue<-
   gather(`Top 1%`, `Top 5%`, `Top 10%`, key = "percentile", value = "value") %>% 
   mutate(percentile = factor(percentile, levels = c('Top 1%', 'Top 5%', 'Top 10%')))
 
-#figure3 <- 
+figure3 <- 
   ggplot(host_revenue)+
   geom_bar(mapping = aes(x = percentile, y = value, fill = percentile), stat = "identity")+
   theme_minimal()+
