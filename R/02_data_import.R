@@ -10,8 +10,8 @@ CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
 CD_Codes %>%
   filter(str_detect (name, "Yukon"))
 
-citycode = "6001"
-cityname = "Whitehorse"
+citycode = "1102"
+cityname = "Charlottetown"
 
 ## Specify dates (start date should be at least two years before the 
 # end date in order to allow for year to year comparisons)
@@ -24,15 +24,15 @@ Start_date <- as.Date("2016-07-01")
 city <- 
   get_census(
     dataset = "CA16", 
-    regions = list(CMA = citycode),  
-    level = "CMA",
+    regions = list(CD = citycode),  
+    level = "CD",
     geo_format = "sf") %>% 
   st_transform(32618)
 
 ## Import private Airbnb files
 
 property <-
-  read_csv("data/Whitehorse_property.csv", col_types = cols_only(
+  read_csv("data/property.csv", col_types = cols_only(
     `Property_ID` = col_character(),
     `Listing_Title` = col_character(),
     `Property_Type` = col_character(),
@@ -86,7 +86,7 @@ property <-
   select(-Property_Type)
 
 daily <- 
-  read_csv("data/Whitehorse_daily.csv", col_types = cols(
+  read_csv("data/daily.csv", col_types = cols(
     `Property_ID` = col_character(),
     Date = col_date(format = ""),
     Status = col_factor(levels = c("U", "B", "A", "R")),

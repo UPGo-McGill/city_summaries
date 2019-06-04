@@ -1,0 +1,20 @@
+---
+title: "Airbnb and city"
+author: "Urban Politics and Governance Research Group"
+date: "June 2019"
+output: html_document
+---
+
+```{r, include = FALSE}
+source("R/01_helper_functions.R")
+options(cancensus.api_key = "CensusMapper_4be2cf3bf91d0cabf967f4934dbdc63b")
+source("R/02_data_import.R")
+source("R/03_mapping.R")
+```
+
+There were `r daily %>% 
+  filter(Date == End_date) %>% 
+  group_by(Property_ID) %>% 
+  nrow()` Airbnb listings in `r cityname` active on `r End_date`. The listings are shown in Figure 1.
+`r figure1`
+  
