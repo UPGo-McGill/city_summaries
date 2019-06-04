@@ -49,4 +49,4 @@ tm_shape(streets)+
                 title="Listing Type")+
   tm_compass()
    
-tmap_save(figure1, "output/figure1.png", width = 2400, height = 2400 )
+#tmap_save(figure1, "output/figure1.png", width = 2400, height = 2400 )

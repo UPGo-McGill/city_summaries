@@ -9,5 +9,5 @@ figure2 <- ggplot(daily %>%
          summarize(Listings = n())) +
   geom_line(aes(Date, Listings)) 
 
-ggsave("output/figure2.jpg")
+#ggsave("output/figure2.jpg")
 

@@ -7,25 +7,15 @@ date: "June 2019"
 ```{r, include = FALSE}
 source("R/01_helper_functions.R")
 # input variables (cityname, citycode, End_date, Start_date) into data import before knitting the script
+options(cancensus.api_key = "CensusMapper_4be2cf3bf91d0cabf967f4934dbdc63b")
 source("R/02_data_import.R")
+source("R/03_mapping.R")
+source("R/04_graphing.R")
 # Set USD to CAD exchange rate
 exchange_rate <- 1.34
 ```
 
 ``` {r, include = FALSE}
-streets <- 
-  getbb(cityname) %>% 
-  opq() %>% 
-  add_osm_feature(key = "highway") %>% 
-  osmdata_sf()
-
-streets <- 
-  rbind(streets$osm_polygons %>% st_cast("LINESTRING"),streets$osm_lines) %>% 
-  as_tibble() %>% 
-  st_as_sf() %>% 
-  st_transform(32618) %>%
-  select(osm_id, name, geometry)
- 
 # Set up timeframes
 year_prior <- as.POSIXlt(End_date)
 year_prior$year <- year_prior$year - 1
@@ -49,47 +39,18 @@ Airbnb listings are a common presence in `r cityname`, with `r daily %>%
  summarise(sum_revenue = sum(Price, na.rm = TRUE) * exchange_rate)`$ in revenue over the same time period. 
  
 *Figure 1* shows the distribution of Airbnb listings throughout `r cityname`, by listing type and revenue. As Airbnb hides the exact location of the listings, the locations may be obfuscated by up to 200 meters.
- 
-``` {r, echo = FALSE}
-tm_shape(property)+
-  tm_dots(scale = 0)+
-tm_shape(streets)+
-  tm_lines(col="grey", alpha = 0.5)+
-  tm_shape(city) +
-  tm_borders(lwd = 1) + 
-  tm_shape(property)+
-  tm_dots(col = "Listing_Type",
-          scale = 4/3, 
-          palette = get_brewer_pal("-Dark2", n = 3), 
-          alpha = 0.6, 
-          size = "revenue", 
-          title.size = "Revenue", 
-          size.lim = c(0, 100000),
-          legend.show = FALSE,
-          legend.size.show = TRUE) +
-  tm_layout(legend.position = c("left", "bottom"),
-            frame = FALSE, legend.bg.alpha = 0.6, legend.bg.color = "white") +
-  tm_add_legend(type="symbol",
-                col= get_brewer_pal("-Dark2", n = 3),
-                labels=c("Entire Home", "Private Room", "Shared Room"),
-                border.lwd = NA,
-                alpha = 1,
-                title="Listing Type")+
-  tm_compass()
-```
 
+```{r, echo = FALSE}
+figure1
+```
 
 **The Evolution of Airbnb**
 
 Airbnb has had an increasing presence in `r cityname`, with *Figure 2* showing its evolution from `r Start_date` to `r End_date`. It is evident that the number of listings has dramatically increased over the past years.  
 
 ``` {r, echo = FALSE} 
-ggplot(daily %>% 
-         group_by(Date) %>% 
-         summarize(Listings = n())) +
-  geom_line(aes(Date, Listings)) 
+figure2
 ```
-
 
 **Housing Loss** 
 
