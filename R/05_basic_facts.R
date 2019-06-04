@@ -73,26 +73,25 @@ summarise(sum_revenue = sum(Price, na.rm = TRUE) * exchange_rate)
 
 # Housing loss on the end date and a year prior
 
-strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, year_prior,
+st_drop_geometry(strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, year_prior,
              End_date, listing_type = Listing_Type) %>% 
   filter(date == End_date) %>% 
   group_by(ghost_ID) %>% 
   summarize(n = sum(housing_units)) %>% 
   ungroup() %>% 
-  summarize(GH_housing_loss = sum(n)) +
+  summarize(GH_housing_loss = sum(n))) +
 nrow(daily %>% 
   filter(Date == End_date) %>% 
   inner_join(property, .) %>% 
-  filter(FREH == TRUE))
+  filter(FREH == TRUE)) 
 
-
-strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, year_prior_prior,
+st_drop_geometry(strr_ghost(property, Property_ID, Airbnb_HID, Created, Scraped, year_prior_prior,
              year_prior, listing_type = Listing_Type) %>% 
   filter(date == year_prior) %>% 
   group_by(ghost_ID) %>% 
   summarize(n = sum(housing_units)) %>% 
   ungroup() %>% 
-  summarize(GH_housing_loss = sum (n)) +
+  summarize(GH_housing_loss = sum (n))) +
   nrow(daily %>% 
          filter(Date == year_prior) %>% 
          inner_join(property, .) %>% 
