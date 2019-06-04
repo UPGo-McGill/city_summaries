@@ -1,9 +1,3 @@
----
-title: "Airbnb and Charlottetown"
-author: "Urban Politics and Governance Research Group"
-date: "June 2019"
----
-
 ```{r, include = FALSE}
 source("R/01_helper_functions.R")
 # input variables (cityname, citycode, End_date, Start_date) into data import before knitting the script
@@ -24,6 +18,10 @@ year_prior$year <- year_prior$year - 1
 year_prior_prior <- as.POSIXlt(year_prior)
 year_prior_prior$year <- year_prior$year - 1
 ```
+
+# Airbnb and `r cityname`
+### Urban Politics and Governance Research Group
+### `r format(End_date, format = "%B %Y")`
 
 **Airbnb Today** 
 
