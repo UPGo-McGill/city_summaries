@@ -3,12 +3,12 @@
 source("R/01_helper_functions.R")
 
 ## Import street basemap
-# Road level based on city size: secondary, tertiary or all
+# Road level based on city size: value = secondary, tertiary or all (no value field)
 
 streets <- 
   getbb(cityname) %>% 
   opq() %>% 
-  add_osm_feature(key = "highway", value = "tertiary") %>% 
+  add_osm_feature(key = "highway") %>% 
   osmdata_sf()
 
 streets <- 
@@ -23,7 +23,9 @@ streets <-
 ##tm_shape(st_buffer(city, 200)) 
 
 figure1 <- 
-  tm_shape(streets)+
+tm_shape(property)+
+  tm_dots(scale = 0)+
+tm_shape(streets)+
   tm_lines(col="grey", alpha = 0.5)+
   tm_shape(city) +
   tm_borders(lwd = 1) + 
@@ -47,4 +49,4 @@ figure1 <-
                 title="Listing Type")+
   tm_compass()
    
-tmap_save(figure1, "output/listing_type.png", width = 2400, height = 2400 )
+tmap_save(figure1, "output/figure1.png", width = 2400, height = 2400 )
