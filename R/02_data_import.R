@@ -7,11 +7,8 @@ source("R/01_helper_functions.R")
 CMA_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CMA") 
 CD_Codes <- filter(list_census_regions(dataset = "CA16"), level == "CD")
 
-CD_Codes %>%
-  filter(str_detect (name, "Yukon"))
-
-citycode = "1102"
-cityname = "Charlottetown"
+citycode = "59935"
+cityname = "Victoria, British Columbia"
 
 ## Specify dates (start date should be at least two years before the 
 # end date in order to allow for year to year comparisons)
@@ -24,8 +21,8 @@ Start_date <- as.Date("2016-07-01")
 city <- 
   get_census(
     dataset = "CA16", 
-    regions = list(CD = citycode),  
-    level = "CD",
+    regions = list(CMA = citycode),  
+    level = "CMA",
     geo_format = "sf") %>% 
   st_transform(32618)
 

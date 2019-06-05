@@ -22,8 +22,9 @@ streets <-
 # For smaller cities or neighbourhoods may need to replace tm_shape(city) for:
 ##tm_shape(st_buffer(city, 200)) 
 
+?tm_shape
 figure1 <- 
-tm_shape(property)+
+tm_shape(property, ext = 1.2)+
   tm_dots(scale = 0)+
 tm_shape(streets)+
   tm_lines(col="grey", alpha = 0.5)+
