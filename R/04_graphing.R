@@ -13,7 +13,8 @@ year_prior_prior$year <- year_prior$year - 1
 figure2 <- ggplot(daily %>% 
          group_by(Date) %>% 
          summarize(Listings = n())) +
-  geom_line(aes(Date, Listings)) 
+  geom_line(aes(Date, Listings)) +
+  theme_minimal()
 
 #ggsave("output/figure2.jpg")
 
