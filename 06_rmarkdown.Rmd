@@ -43,12 +43,14 @@ Airbnb listings are a common presence in `r cityname`, with `r round(daily %>%
                            Date >= year_prior &
                            Status == "R" ) %>%
                   summarise(sum_revenue = sum(Price, na.rm = TRUE) * exchange_rate), digits = -3), big.mark = ",", small.mark = ",")` in revenue over the same time period. 
- 
+                  
 *Figure 1* shows the distribution of Airbnb listings throughout `r cityname`, by listing type and revenue. As Airbnb hides the exact location of the listings, the locations may be obfuscated by up to 200 meters.
 
 ```{r, echo = FALSE, fig.cap="\\label{figure1} Figure 1: Active Airbnb listings by listing type and revenue", fig.align = 'center', message = FALSE}
 figure1
 ```
+
+Prince Edward County is one of the four rural municipalities with the highest Airbnb revenue. In 2018, Airbnb hosts earned $1920 per housing unit, compared to $27 in other rural areas.
 
 **The Evolution of Airbnb**
 
